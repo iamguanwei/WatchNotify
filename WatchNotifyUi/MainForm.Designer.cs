@@ -36,6 +36,7 @@ namespace WatchNotifyUi
             tb_监视 = new TextBox();
             gb_配置 = new GroupBox();
             pan_配置 = new Panel();
+            bt_配置_测试发送地址 = new Button();
             bt_配置_还原 = new Button();
             bt_配置_保存 = new Button();
             tb_配置_监视清单 = new TextBox();
@@ -45,11 +46,12 @@ namespace WatchNotifyUi
             ni_托盘图标 = new NotifyIcon(components);
             cms_托盘菜单 = new ContextMenuStrip(components);
             tsmi_打开 = new ToolStripMenuItem();
+            tsmi_开启监控 = new ToolStripMenuItem();
             tsmi_开机启动 = new ToolStripMenuItem();
             tss_分割线 = new ToolStripSeparator();
             tsmi_退出 = new ToolStripMenuItem();
             tt_提示 = new ToolTip(components);
-            bt_配置_测试发送地址 = new Button();
+            toolStripMenuItem1 = new ToolStripSeparator();
             gb_监视.SuspendLayout();
             gb_配置.SuspendLayout();
             pan_配置.SuspendLayout();
@@ -126,6 +128,16 @@ namespace WatchNotifyUi
             pan_配置.Size = new Size(770, 218);
             pan_配置.TabIndex = 0;
             // 
+            // bt_配置_测试发送地址
+            // 
+            bt_配置_测试发送地址.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            bt_配置_测试发送地址.Location = new Point(684, 32);
+            bt_配置_测试发送地址.Name = "bt_配置_测试发送地址";
+            bt_配置_测试发送地址.Size = new Size(75, 23);
+            bt_配置_测试发送地址.TabIndex = 5;
+            bt_配置_测试发送地址.Text = "测试";
+            bt_配置_测试发送地址.UseVisualStyleBackColor = true;
+            // 
             // bt_配置_还原
             // 
             bt_配置_还原.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
@@ -190,31 +202,37 @@ namespace WatchNotifyUi
             // 
             // cms_托盘菜单
             // 
-            cms_托盘菜单.Items.AddRange(new ToolStripItem[] { tsmi_打开, tsmi_开机启动, tss_分割线, tsmi_退出 });
+            cms_托盘菜单.Items.AddRange(new ToolStripItem[] { tsmi_打开, toolStripMenuItem1, tsmi_开启监控, tsmi_开机启动, tss_分割线, tsmi_退出 });
             cms_托盘菜单.Name = "cms_托盘菜单";
-            cms_托盘菜单.Size = new Size(140, 76);
+            cms_托盘菜单.Size = new Size(181, 126);
             // 
             // tsmi_打开
             // 
             tsmi_打开.Name = "tsmi_打开";
-            tsmi_打开.Size = new Size(139, 22);
+            tsmi_打开.Size = new Size(180, 22);
             tsmi_打开.Text = "打开(&O)";
+            // 
+            // tsmi_开启监控
+            // 
+            tsmi_开启监控.Name = "tsmi_开启监控";
+            tsmi_开启监控.Size = new Size(180, 22);
+            tsmi_开启监控.Text = "开启监控(&M)";
             // 
             // tsmi_开机启动
             // 
             tsmi_开机启动.Name = "tsmi_开机启动";
-            tsmi_开机启动.Size = new Size(139, 22);
+            tsmi_开机启动.Size = new Size(180, 22);
             tsmi_开机启动.Text = "开机启动(&S)";
             // 
             // tss_分割线
             // 
             tss_分割线.Name = "tss_分割线";
-            tss_分割线.Size = new Size(136, 6);
+            tss_分割线.Size = new Size(177, 6);
             // 
             // tsmi_退出
             // 
             tsmi_退出.Name = "tsmi_退出";
-            tsmi_退出.Size = new Size(139, 22);
+            tsmi_退出.Size = new Size(180, 22);
             tsmi_退出.Text = "退出(&E)";
             // 
             // tt_提示
@@ -222,15 +240,10 @@ namespace WatchNotifyUi
             tt_提示.ToolTipIcon = ToolTipIcon.Info;
             tt_提示.ToolTipTitle = "格式说明";
             // 
-            // bt_配置_测试发送地址
+            // toolStripMenuItem1
             // 
-            bt_配置_测试发送地址.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-            bt_配置_测试发送地址.Location = new Point(684, 32);
-            bt_配置_测试发送地址.Name = "bt_配置_测试发送地址";
-            bt_配置_测试发送地址.Size = new Size(75, 23);
-            bt_配置_测试发送地址.TabIndex = 5;
-            bt_配置_测试发送地址.Text = "测试";
-            bt_配置_测试发送地址.UseVisualStyleBackColor = true;
+            toolStripMenuItem1.Name = "toolStripMenuItem1";
+            toolStripMenuItem1.Size = new Size(177, 6);
             // 
             // MainForm
             // 
@@ -266,6 +279,7 @@ namespace WatchNotifyUi
         private NotifyIcon ni_托盘图标;
         private ContextMenuStrip cms_托盘菜单;
         private ToolStripMenuItem tsmi_打开;
+        private ToolStripMenuItem tsmi_开启监控;
         private ToolStripMenuItem tsmi_开机启动;
         private ToolStripSeparator tss_分割线;
         private ToolStripMenuItem tsmi_退出;
@@ -273,5 +287,6 @@ namespace WatchNotifyUi
         private Button bt_配置_保存;
         private ToolTip tt_提示;
         private Button bt_配置_测试发送地址;
+        private ToolStripSeparator toolStripMenuItem1;
     }
 }

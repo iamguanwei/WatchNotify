@@ -26,6 +26,11 @@ namespace WatchNotifyUi.Entity
         /// </summary>
         public List<string> WatchList { get; set; } = new();
 
+        /// <summary>
+        /// 获取或设置是否自动启动监控。
+        /// </summary>
+        public bool AutoStartMonitor { get; set; } = false;
+
         #endregion
     }
 }

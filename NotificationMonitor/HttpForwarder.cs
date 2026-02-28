@@ -11,10 +11,10 @@ using NotificationMonitor.Core.Interface;
 namespace NotificationMonitor
 {
     /// <summary>
-    /// ntfy.sh通知转发器
-    /// 将通知转发到ntfy.sh服务，支持频率限制和排队等待
+    /// HTTP通知转发器
+    /// 将通知转发到指定的HTTP/HTTPS地址，支持频率限制和排队等待
     /// </summary>
-    public class NtfyForwarder : INotificationForwarder, IDisposable
+    public class HttpForwarder : INotificationForwarder, IDisposable
     {
         #region 常量
 
@@ -23,16 +23,12 @@ namespace NotificationMonitor
         /// </summary>
         private const int FORWARD_INTERVAL_MS = 10000;
 
-        private const string DEFAULT_TOPIC = "CygJ1TvlJkwVCDZe";
-        private const string NTFY_BASE_URL = "https://ntfy.sh";
-
         #endregion
 
         #region private 字段
 
         private readonly HttpClient _httpClient;
-        private readonly string _topic;
-        private readonly string _ntfyUrl;
+        private readonly string _forwardUrl;
         private DateTime _lastForwardTime;
         private readonly ConcurrentQueue<PendingNotification> _pendingQueue;
         private readonly object _forwardLock;
@@ -41,16 +37,24 @@ namespace NotificationMonitor
 
         #endregion
 
+        #region public 属性
+
+        /// <summary>
+        /// 获取当前使用的转发URL
+        /// </summary>
+        public string ForwardUrl => _forwardUrl;
+
+        #endregion
+
         #region 构造函数
 
         /// <summary>
-        /// 初始化ntfy转发器实例
+        /// 初始化HTTP转发器实例
         /// </summary>
-        /// <param name="topic">ntfy主题，为空则使用默认主题</param>
-        public NtfyForwarder(string? topic = null)
+        /// <param name="forwardUrl">转发URL，支持{0}占位符替换消息内容</param>
+        public HttpForwarder(string forwardUrl)
         {
-            _topic = string.IsNullOrEmpty(topic) ? DEFAULT_TOPIC : topic;
-            _ntfyUrl = $"{NTFY_BASE_URL}/{_topic}";
+            _forwardUrl = forwardUrl ?? string.Empty;
             _lastForwardTime = DateTime.MinValue;
             _httpClient = new HttpClient();
             _pendingQueue = new ConcurrentQueue<PendingNotification>();
@@ -64,7 +68,7 @@ namespace NotificationMonitor
         #region INotificationForwarder 实现
 
         /// <summary>
-        /// 转发通知到ntfy.sh
+        /// 转发通知到指定URL
         /// 如果距离上次转发不足10秒，通知将加入队列等待发送
         /// </summary>
         /// <param name="notification">通知信息</param>
@@ -75,6 +79,11 @@ namespace NotificationMonitor
             if (_isDisposed)
             {
                 return ForwardResult.Failure("转发器已释放");
+            }
+
+            if (string.IsNullOrEmpty(_forwardUrl))
+            {
+                return ForwardResult.Failure("转发URL未配置");
             }
 
             try
@@ -177,7 +186,7 @@ namespace NotificationMonitor
         }
 
         /// <summary>
-        /// 发送通知到ntfy.sh
+        /// 发送通知到指定URL
         /// </summary>
         /// <param name="message">消息内容</param>
         /// <param name="cancellationToken">取消令牌</param>
@@ -186,8 +195,12 @@ namespace NotificationMonitor
         {
             try
             {
+                string url = _forwardUrl.Contains("{0}")
+                    ? string.Format(_forwardUrl, Uri.EscapeDataString(message))
+                    : _forwardUrl;
+
                 var content = new StringContent(message, Encoding.UTF8, "text/plain");
-                var response = await _httpClient.PostAsync(_ntfyUrl, content, cancellationToken);
+                var response = await _httpClient.PostAsync(url, content, cancellationToken);
 
                 lock (_forwardLock)
                 {
@@ -196,11 +209,11 @@ namespace NotificationMonitor
 
                 if (response.IsSuccessStatusCode)
                 {
-                    return ForwardResult.Success($"通知已成功发送到ntfy.sh: {message}");
+                    return ForwardResult.Success($"通知已成功发送: {message}");
                 }
                 else
                 {
-                    return ForwardResult.Failure($"发送失败，HTTP状态码: {response.StatusCode}");
+                    return ForwardResult.Failure($"发送失败，HTTP状态码: {(int)response.StatusCode} {response.StatusCode}");
                 }
             }
             catch (Exception ex)
